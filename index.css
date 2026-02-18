@@ -35,6 +35,11 @@ body {
   }
 
   html, body {
+    width: 297mm;
+    height: 210mm;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
     background: #050505 !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
@@ -54,7 +59,9 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 80vw;
-    max-width: 660px;
+    width: 240mm;
+    max-width: 240mm;
+    page-break-inside: avoid;
+    break-inside: avoid;
   }
 }
