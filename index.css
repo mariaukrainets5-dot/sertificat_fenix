@@ -26,3 +26,35 @@ body {
 .perspective-1000 {
   perspective: 1000px;
 }
+
+/* Print styles for PDF export */
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 0;
+  }
+
+  html, body {
+    background: #050505 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+
+  #certificate-print,
+  #certificate-print * {
+    visibility: visible;
+  }
+
+  #certificate-print {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80vw;
+    max-width: 660px;
+  }
+}

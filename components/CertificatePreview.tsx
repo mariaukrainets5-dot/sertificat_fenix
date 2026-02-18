@@ -24,7 +24,7 @@ export const CertificatePreview: React.FC<CertificatePreviewProps> = ({ data, is
         <div className="relative h-full w-full bg-[#080808] rounded-2xl overflow-hidden border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex flex-col justify-between z-10 backdrop-blur-xl">
           
           {/* Background Textures */}
-          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-30 mix-blend-overlay"></div>
+          <div className="absolute inset-0 opacity-20 mix-blend-overlay" style={{backgroundImage:'repeating-linear-gradient(45deg,#ffffff08 0,#ffffff08 1px,transparent 0,transparent 50%)',backgroundSize:'4px 4px'}}></div>
           <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-black/80"></div>
           
           {/* Decorative Elements */}

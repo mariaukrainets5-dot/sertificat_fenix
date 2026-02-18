@@ -401,7 +401,7 @@ function App() {
                >
                 {/* Background decoration */}
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-zinc-800/20 via-transparent to-transparent pointer-events-none"></div>
-                <div className="absolute top-0 left-0 w-full h-full bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay"></div>
+                <div className="absolute top-0 left-0 w-full h-full opacity-20 mix-blend-overlay" style={{backgroundImage:`url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`}}></div>
                 
                 <div className="absolute top-8 left-8 flex items-center gap-3">
                   <span className="flex h-2 w-2 relative">
@@ -413,7 +413,7 @@ function App() {
                   </h3>
                 </div>
 
-                <div className="w-full transform transition-all duration-500 hover:scale-[1.02] hover:-translate-y-2 z-10">
+                <div id="certificate-print" className="w-full transform transition-all duration-500 hover:scale-[1.02] hover:-translate-y-2 z-10">
                   <CertificatePreview data={previewData} isGenerating={isGenerating} />
                 </div>
 
@@ -422,7 +422,7 @@ function App() {
                     Доступні дії
                   </p>
                   <div className="flex gap-4">
-                    <button className="flex items-center gap-2 px-6 py-3 rounded-full bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white transition-all text-xs uppercase tracking-wider font-bold border border-white/5 hover:border-white/20 hover:shadow-[0_0_15px_rgba(255,255,255,0.1)]">
+                    <button onClick={() => window.print()} className="flex items-center gap-2 px-6 py-3 rounded-full bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white transition-all text-xs uppercase tracking-wider font-bold border border-white/5 hover:border-white/20 hover:shadow-[0_0_15px_rgba(255,255,255,0.1)]">
                       <Printer size={14} /> PDF
                     </button>
                     <button className="flex items-center gap-2 px-6 py-3 rounded-full bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white transition-all text-xs uppercase tracking-wider font-bold border border-white/5 hover:border-white/20">
