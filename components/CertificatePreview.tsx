@@ -7,21 +7,22 @@ import { motion } from 'framer-motion';
 interface CertificatePreviewProps {
   data: Partial<Certificate>;
   isGenerating?: boolean;
+  forPrint?: boolean;
 }
 
-export const CertificatePreview: React.FC<CertificatePreviewProps> = ({ data, isGenerating }) => {
+export const CertificatePreview: React.FC<CertificatePreviewProps> = ({ data, isGenerating, forPrint }) => {
   const formattedAmount = new Intl.NumberFormat('uk-UA').format(data.amount || 0);
 
   return (
     <div className="relative w-full max-w-xl mx-auto group perspective-1000">
       {/* 3D Tilt Effect Container (Visual only here, CSS perspective added) */}
-      <div className="relative aspect-[1.7/1] w-full transition-transform duration-500 ease-out transform-gpu group-hover:rotate-x-2 group-hover:rotate-y-2">
+      <div className={`relative w-full transition-transform duration-500 ease-out transform-gpu ${forPrint ? '' : 'aspect-[1.7/1] group-hover:rotate-x-2 group-hover:rotate-y-2'}`}>
         
         {/* Glow Effects Behind */}
         <div className="absolute -inset-4 bg-gradient-to-tr from-orange-600/40 via-red-900/20 to-amber-600/30 rounded-[30px] blur-2xl opacity-40 group-hover:opacity-70 transition-opacity duration-700 animate-pulse-slow"></div>
         
         {/* Main Card */}
-        <div className="relative h-full w-full bg-[#080808] rounded-2xl overflow-hidden border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex flex-col justify-between z-10 backdrop-blur-xl">
+        <div className={`relative w-full bg-[#080808] rounded-2xl border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex flex-col justify-between z-10 backdrop-blur-xl ${forPrint ? 'overflow-visible' : 'h-full overflow-hidden'}`}>
           
           {/* Background Textures */}
           <div className="absolute inset-0 opacity-20 mix-blend-overlay" style={{backgroundImage:'repeating-linear-gradient(45deg,#ffffff08 0,#ffffff08 1px,transparent 0,transparent 50%)',backgroundSize:'4px 4px'}}></div>

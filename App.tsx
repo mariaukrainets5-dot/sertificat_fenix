@@ -507,7 +507,7 @@ function App() {
       {/* Page 1: Certificate */}
       <div className="print-page">
         <div style={{width:'80%', maxWidth:'660px'}}>
-          <CertificatePreview data={previewData} isGenerating={false} />
+          <CertificatePreview data={previewData} isGenerating={false} forPrint={true} />
         </div>
       </div>
       {/* Page 2: Rules */}
