@@ -35,33 +35,42 @@ body {
   }
 
   html, body {
-    width: 297mm;
-    height: 210mm;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
     background: #050505 !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
+    overflow: visible !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
 
-  body * {
-    visibility: hidden;
+  #screen-view {
+    display: none !important;
   }
 
-  #certificate-print,
-  #certificate-print * {
-    visibility: visible;
+  #print-view {
+    display: block !important;
   }
 
-  #certificate-print {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 240mm;
-    max-width: 240mm;
-    page-break-inside: avoid;
-    break-inside: avoid;
+  .print-page {
+    width: 297mm;
+    height: 210mm;
+    background: #050505;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    page-break-after: always;
+    break-after: page;
+  }
+
+  .print-rules-page {
+    width: 297mm;
+    height: 210mm;
+    background: #050505;
+    padding: 25mm 20mm;
+    box-sizing: border-box;
+    page-break-after: auto;
+    break-after: auto;
   }
 }

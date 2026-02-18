@@ -111,10 +111,10 @@ export const CertificatePreview: React.FC<CertificatePreviewProps> = ({ data, is
           {/* Footer Section */}
           <div className="relative z-10 bg-gradient-to-t from-black via-black/90 to-transparent px-8 py-6 flex justify-between items-end">
             <div className="flex flex-col gap-1.5">
-              <span className="text-[9px] text-zinc-600 uppercase font-mono tracking-widest flex items-center gap-2">
+              <span className="text-[10px] text-zinc-400 uppercase font-mono tracking-widest flex items-center gap-2">
                 <Shield size={10} /> Дійсний до
               </span>
-              <span className="text-base text-zinc-300 font-mono font-bold tracking-wider">
+              <span className="text-lg text-white font-mono font-bold tracking-wider">
                 {data.expiryDate || 'DD.MM.YYYY'}
               </span>
             </div>
