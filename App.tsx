@@ -126,6 +126,7 @@ function App() {
   };
 
   return (
+    <>
     <div id="screen-view" className="min-h-screen bg-[#050505] text-zinc-100 selection:bg-orange-500/30 selection:text-orange-200 font-sans overflow-x-hidden relative flex flex-col">
       {/* Background Noise Texture */}
       <div className="fixed inset-0 z-0 pointer-events-none opacity-[0.03]" style={{backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`}}></div>
@@ -469,38 +470,6 @@ function App() {
         </div>
       </main>
 
-      {/* Hidden print view: certificate + rules */}
-      <div id="print-view" style={{display:'none'}}>
-        {/* Page 1: Certificate */}
-        <div className="print-page">
-          <div style={{width:'80%', maxWidth:'660px'}}>
-            <CertificatePreview data={previewData} isGenerating={false} />
-          </div>
-        </div>
-        {/* Page 2: Rules */}
-        <div className="print-rules-page">
-          <div style={{display:'flex', alignItems:'center', gap:'12px', marginBottom:'32px'}}>
-            <div style={{width:'4px', height:'32px', background:'#f97316', borderRadius:'2px'}}></div>
-            <h2 style={{color:'#ffffff', fontFamily:'Rajdhani, sans-serif', fontSize:'22px', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.15em', margin:0}}>
-              Умови використання сертифіката
-            </h2>
-          </div>
-          <div style={{display:'flex', alignItems:'center', gap:'8px', marginBottom:'28px'}}>
-            <span style={{color:'#a1a1aa', fontFamily:'"Share Tech Mono", monospace', fontSize:'11px', letterSpacing:'0.15em', textTransform:'uppercase'}}>
-              FENIX ARMY STORE — fenix-voentorg.com.ua
-            </span>
-          </div>
-          <ol style={{listStyle:'none', padding:0, margin:0}}>
-            {RULES.map((rule, i) => (
-              <li key={i} style={{display:'flex', gap:'20px', marginBottom:'14px', alignItems:'flex-start'}}>
-                <span style={{color:'#f97316', fontFamily:'"Share Tech Mono", monospace', fontSize:'13px', fontWeight:'bold', minWidth:'24px'}}>{String(i+1).padStart(2,'0')}</span>
-                <span style={{color:'#d4d4d8', fontFamily:'"Share Tech Mono", monospace', fontSize:'13px', lineHeight:'1.6'}}>{rule}</span>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </div>
-
       {/* Rules Modal */}
       {showRules && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onClick={() => setShowRules(false)}>
@@ -532,6 +501,39 @@ function App() {
         </div>
       )}
     </div>
+
+    {/* Print view — outside screen-view so it's not hidden with it */}
+    <div id="print-view" style={{display:'none'}}>
+      {/* Page 1: Certificate */}
+      <div className="print-page">
+        <div style={{width:'80%', maxWidth:'660px'}}>
+          <CertificatePreview data={previewData} isGenerating={false} />
+        </div>
+      </div>
+      {/* Page 2: Rules */}
+      <div className="print-rules-page">
+        <div style={{display:'flex', alignItems:'center', gap:'12px', marginBottom:'32px'}}>
+          <div style={{width:'4px', height:'32px', background:'#f97316', borderRadius:'2px'}}></div>
+          <h2 style={{color:'#ffffff', fontFamily:'Rajdhani, sans-serif', fontSize:'22px', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.15em', margin:0}}>
+            Умови використання сертифіката
+          </h2>
+        </div>
+        <div style={{marginBottom:'28px'}}>
+          <span style={{color:'#a1a1aa', fontFamily:'"Share Tech Mono", monospace', fontSize:'11px', letterSpacing:'0.15em', textTransform:'uppercase'}}>
+            FENIX ARMY STORE — fenix-voentorg.com.ua
+          </span>
+        </div>
+        <ol style={{listStyle:'none', padding:0, margin:0}}>
+          {RULES.map((rule, i) => (
+            <li key={i} style={{display:'flex', gap:'20px', marginBottom:'14px', alignItems:'flex-start'}}>
+              <span style={{color:'#f97316', fontFamily:'"Share Tech Mono", monospace', fontSize:'13px', fontWeight:'bold', minWidth:'24px'}}>{String(i+1).padStart(2,'0')}</span>
+              <span style={{color:'#d4d4d8', fontFamily:'"Share Tech Mono", monospace', fontSize:'13px', lineHeight:'1.6'}}>{rule}</span>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
+    </>
   );
 }
 
