@@ -34,6 +34,7 @@ function App() {
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<'create' | 'history'>('create');
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [showRules, setShowRules] = useState<boolean>(false);
   
   // Date logic: Default 6 months from now
   const defaultExpiry = new Date();
@@ -345,6 +346,9 @@ function App() {
                                   <span>{new Date(cert.createdAt).toLocaleDateString('uk-UA')}</span>
                                   <span className="w-0.5 h-3 bg-zinc-800"></span>
                                   <span>{cert.managerName}</span>
+                                  <span className="w-0.5 h-3 bg-zinc-800"></span>
+                                  <Calendar size={10} className="text-zinc-600" />
+                                  <span>до {cert.expiryDate.split('-').reverse().join('.')}</span>
                                 </div>
                               </div>
                               <span className="bg-white/5 text-zinc-200 px-3 py-1.5 rounded text-sm font-bold font-mono border border-white/5 shadow-sm">
@@ -425,7 +429,7 @@ function App() {
                     <button onClick={() => window.print()} className="flex items-center gap-2 px-6 py-3 rounded-full bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white transition-all text-xs uppercase tracking-wider font-bold border border-white/5 hover:border-white/20 hover:shadow-[0_0_15px_rgba(255,255,255,0.1)]">
                       <Printer size={14} /> PDF
                     </button>
-                    <button className="flex items-center gap-2 px-6 py-3 rounded-full bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white transition-all text-xs uppercase tracking-wider font-bold border border-white/5 hover:border-white/20">
+                    <button onClick={() => setShowRules(true)} className="flex items-center gap-2 px-6 py-3 rounded-full bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white transition-all text-xs uppercase tracking-wider font-bold border border-white/5 hover:border-white/20">
                       <ShieldCheck size={14} /> Правила
                     </button>
                   </div>
@@ -455,6 +459,44 @@ function App() {
 
         </div>
       </main>
+
+      {/* Rules Modal */}
+      {showRules && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onClick={() => setShowRules(false)}>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            className="bg-[#0A0A0B] border border-white/10 rounded-2xl p-8 max-w-md w-full shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="font-display font-bold uppercase text-white text-lg tracking-wider mb-6 flex items-center gap-3">
+              <ShieldCheck className="text-orange-500" size={20} />
+              Умови використання сертифіката
+            </h3>
+            <ul className="space-y-4">
+              {[
+                'Сертифікат діє до зазначеної дати включно',
+                'Використовується одноразово для оплати товарів або послуг',
+                'Обміну на готівку не підлягає',
+                'При втраті сертифікат не відновлюється',
+                'Залишок суми після часткового використання зберігається',
+                'Підтвердження автентичності — за кодом у системі FENIX',
+              ].map((rule, i) => (
+                <li key={i} className="flex gap-3 text-sm text-zinc-400">
+                  <span className="text-orange-500 font-mono font-bold shrink-0">{String(i + 1).padStart(2, '0')}</span>
+                  <span>{rule}</span>
+                </li>
+              ))}
+            </ul>
+            <button
+              onClick={() => setShowRules(false)}
+              className="mt-8 w-full py-3 rounded-xl bg-zinc-900 border border-white/5 text-zinc-400 hover:text-white hover:border-white/20 transition-all text-xs uppercase tracking-widest font-bold"
+            >
+              Закрити
+            </button>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 }
