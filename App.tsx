@@ -48,6 +48,7 @@ function App() {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [showRules, setShowRules] = useState<boolean>(false);
   const [crmStatus, setCrmStatus] = useState<Record<string, 'syncing' | 'synced' | 'error'>>({});
+  const [managers, setManagers] = useState<{ id: number; full_name: string }[]>([]);
   
   // Date logic: Default 6 months from now
   const defaultExpiry = new Date();
@@ -64,6 +65,16 @@ function App() {
         console.error("Failed to parse history");
       }
     }
+    // Load managers from Key CRM
+    fetch('/api/managers')
+      .then(r => r.json())
+      .then(data => {
+        if (data.data?.length) {
+          setManagers(data.data);
+          setManager(data.data[0].full_name);
+        }
+      })
+      .catch(() => {}); // silently fail — keep default value
   }, []);
 
   const generateRandomCodeString = () => {
@@ -361,15 +372,33 @@ function App() {
                         </div>
                         <div className="group">
                           <label className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest block mb-2 ml-1 group-focus-within:text-orange-500 transition-colors">Менеджер</label>
-                           <div className="relative">
-                             <input
+                          <div className="relative">
+                            {managers.length > 0 ? (
+                              <select
+                                value={manager}
+                                onChange={(e) => setManager(e.target.value)}
+                                className="w-full bg-zinc-900/30 border border-white/5 rounded-xl py-4 px-4 text-sm text-white focus:outline-none focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/50 transition-all font-mono appearance-none cursor-pointer"
+                                style={{ backgroundImage: 'none' }}
+                              >
+                                {managers.map(m => (
+                                  <option key={m.id} value={m.full_name} className="bg-zinc-900 text-white">
+                                    {m.full_name}
+                                  </option>
+                                ))}
+                              </select>
+                            ) : (
+                              <input
                                 type="text"
                                 value={manager}
                                 onChange={(e) => setManager(e.target.value)}
                                 placeholder="Ім'я менеджера"
                                 className="w-full bg-zinc-900/30 border border-white/5 rounded-xl py-4 px-4 text-sm text-white placeholder-zinc-700 focus:outline-none focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/50 transition-all font-mono"
-                             />
-                           </div>
+                              />
+                            )}
+                            <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500">
+                              <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><path d="M6 8L1 3h10z"/></svg>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
