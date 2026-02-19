@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Copy, 
-  RefreshCw, 
-  History, 
-  Trash2, 
-  Printer, 
+import {
+  Copy,
+  RefreshCw,
+  History,
+  Trash2,
+  Printer,
   ShieldAlert,
   Ticket,
   User,
@@ -14,7 +14,10 @@ import {
   ShieldCheck,
   Sparkles,
   Zap,
-  CheckCircle2
+  CheckCircle2,
+  Upload,
+  Search,
+  Ban
 } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -44,6 +47,7 @@ function App() {
   const [activeTab, setActiveTab] = useState<'create' | 'history'>('create');
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [showRules, setShowRules] = useState<boolean>(false);
+  const [crmStatus, setCrmStatus] = useState<Record<string, 'syncing' | 'synced' | 'error'>>({});
   
   // Date logic: Default 6 months from now
   const defaultExpiry = new Date();
@@ -95,9 +99,10 @@ function App() {
       const updatedHistory = [newCert, ...history];
       setHistory(updatedHistory);
       localStorage.setItem('fenix_certs', JSON.stringify(updatedHistory));
-      
+
       setIsGenerating(false);
       setActiveTab('history');
+      syncToCRM(newCert);
     }, 800);
   };
 
@@ -109,6 +114,77 @@ function App() {
 
   const formatForCRM = (cert: Certificate) => {
     return `СЕРТИФІКАТ FENIX\nКод: ${cert.code}\nСума: ${cert.amount} грн\nДіє до: ${cert.expiryDate}\nСтворив: ${cert.managerName}`;
+  };
+
+  const syncToCRM = async (cert: Certificate) => {
+    setCrmStatus(prev => ({ ...prev, [cert.id]: 'syncing' }));
+    try {
+      const res = await fetch('/api/certificates', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          code: cert.code,
+          amount: cert.amount,
+          recipientName: cert.recipientName,
+          managerName: cert.managerName,
+          expiryDate: cert.expiryDate,
+        }),
+      });
+      const data = await res.json();
+      if (res.ok && data.crm_id) {
+        setHistory(prev => {
+          const updated = prev.map(c =>
+            c.id === cert.id ? { ...c, crm_id: data.crm_id } : c
+          );
+          localStorage.setItem('fenix_certs', JSON.stringify(updated));
+          return updated;
+        });
+        setCrmStatus(prev => ({ ...prev, [cert.id]: 'synced' }));
+      } else {
+        setCrmStatus(prev => ({ ...prev, [cert.id]: 'error' }));
+      }
+    } catch {
+      setCrmStatus(prev => ({ ...prev, [cert.id]: 'error' }));
+    }
+  };
+
+  const verifyCRM = async (cert: Certificate) => {
+    try {
+      const res = await fetch(`/api/certificates?code=${cert.code}`);
+      const data = await res.json();
+      if (data.found) {
+        alert(`✅ Знайдено в CRM\nСтатус: ${data.status}\nСума: ${data.amount} грн`);
+      } else {
+        alert('⚠️ Сертифікат не знайдено в CRM');
+      }
+    } catch {
+      alert('❌ Помилка підключення до CRM');
+    }
+  };
+
+  const useCertCRM = async (cert: Certificate) => {
+    if (!confirm(`Списати сертифікат ${cert.code} в CRM?`)) return;
+    try {
+      const res = await fetch('/api/certificates', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: cert.code, crm_id: cert.crm_id }),
+      });
+      if (res.ok) {
+        setHistory(prev => {
+          const updated = prev.map(c =>
+            c.id === cert.id ? { ...c, status: 'redeemed' as const } : c
+          );
+          localStorage.setItem('fenix_certs', JSON.stringify(updated));
+          return updated;
+        });
+        alert('✅ Сертифікат списано в CRM');
+      } else {
+        alert('❌ Помилка при списанні');
+      }
+    } catch {
+      alert('❌ Помилка підключення до CRM');
+    }
   };
 
   const clearHistory = () => {
@@ -374,19 +450,40 @@ function App() {
                             )}
                             
                             <div className="grid grid-cols-2 gap-3 mt-3 relative z-10">
-                              <button 
+                              <button
                                 onClick={() => copyToClipboard(cert.code, `code-${cert.id}`)}
                                 className="flex items-center justify-center gap-2 py-2.5 rounded-lg bg-black hover:bg-zinc-900 text-xs text-zinc-300 transition-all border border-zinc-800 hover:border-zinc-700 active:scale-95 group/btn"
                               >
                                 {copiedId === `code-${cert.id}` ? <CheckCircle2 size={14} className="text-emerald-500" /> : <Copy size={14} className="text-zinc-600 group-hover/btn:text-white transition-colors" />}
                                 <span>Код</span>
                               </button>
-                              <button 
-                                onClick={() => copyToClipboard(formatForCRM(cert), `crm-${cert.id}`)}
-                                className="flex items-center justify-center gap-2 py-2.5 rounded-lg bg-orange-950/20 hover:bg-orange-950/40 text-xs text-orange-400 transition-all border border-orange-500/10 hover:border-orange-500/30 active:scale-95 group/btn"
+                              <button
+                                onClick={() => syncToCRM(cert)}
+                                disabled={crmStatus[cert.id] === 'syncing' || !!cert.crm_id}
+                                className="flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs transition-all border active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed group/btn bg-blue-950/20 hover:bg-blue-950/40 text-blue-400 border-blue-500/10 hover:border-blue-500/30"
                               >
-                                {copiedId === `crm-${cert.id}` ? <CheckCircle2 size={14} className="text-orange-500" /> : <ShieldCheck size={14} className="text-orange-500/50 group-hover/btn:text-orange-500 transition-colors" />}
-                                <span>CRM</span>
+                                {crmStatus[cert.id] === 'syncing' ? <RefreshCw size={14} className="animate-spin" /> :
+                                 cert.crm_id || crmStatus[cert.id] === 'synced' ? <CheckCircle2 size={14} className="text-emerald-500" /> :
+                                 crmStatus[cert.id] === 'error' ? <Upload size={14} className="text-red-400" /> :
+                                 <Upload size={14} className="text-blue-400" />}
+                                <span>{cert.crm_id ? 'Синк' : crmStatus[cert.id] === 'error' ? 'Помилка' : 'CRM'}</span>
+                              </button>
+                            </div>
+                            <div className="grid grid-cols-2 gap-3 mt-2 relative z-10">
+                              <button
+                                onClick={() => verifyCRM(cert)}
+                                className="flex items-center justify-center gap-2 py-2 rounded-lg bg-zinc-900/50 hover:bg-zinc-800 text-xs text-zinc-400 hover:text-white transition-all border border-zinc-800 hover:border-zinc-600 active:scale-95"
+                              >
+                                <Search size={13} />
+                                <span>Перевірити</span>
+                              </button>
+                              <button
+                                onClick={() => useCertCRM(cert)}
+                                disabled={cert.status === 'redeemed'}
+                                className="flex items-center justify-center gap-2 py-2 rounded-lg text-xs transition-all border active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed bg-red-950/20 hover:bg-red-950/40 text-red-400 border-red-500/10 hover:border-red-500/30"
+                              >
+                                <Ban size={13} />
+                                <span>{cert.status === 'redeemed' ? 'Списано' : 'Списати'}</span>
                               </button>
                             </div>
                           </motion.div>

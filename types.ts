@@ -7,6 +7,7 @@ export interface Certificate {
   createdAt: string;
   expiryDate: string;
   status: 'active' | 'redeemed';
+  crm_id?: string;
 }
 
 export type PresetAmount = 500 | 1000 | 2000 | 5000;
