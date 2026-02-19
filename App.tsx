@@ -359,15 +359,15 @@ function App() {
                              <Calendar className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-700 w-4 h-4 group-focus-within:text-white transition-colors" />
                            </div>
                         </div>
-                        <div>
-                          <label className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest block mb-2 ml-1">Менеджер</label>
-                           <div className="relative opacity-60">
-                             <input 
+                        <div className="group">
+                          <label className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest block mb-2 ml-1 group-focus-within:text-orange-500 transition-colors">Менеджер</label>
+                           <div className="relative">
+                             <input
                                 type="text"
                                 value={manager}
                                 onChange={(e) => setManager(e.target.value)}
-                                className="w-full bg-zinc-900/30 border border-white/5 rounded-xl py-4 px-4 text-sm text-zinc-500 focus:outline-none cursor-not-allowed font-mono" 
-                                readOnly
+                                placeholder="Ім'я менеджера"
+                                className="w-full bg-zinc-900/30 border border-white/5 rounded-xl py-4 px-4 text-sm text-white placeholder-zinc-700 focus:outline-none focus:border-orange-500/50 focus:ring-1 focus:ring-orange-500/50 transition-all font-mono"
                              />
                            </div>
                         </div>
